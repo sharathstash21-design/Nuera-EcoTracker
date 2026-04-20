@@ -66,82 +66,20 @@ async function callGemini(prompt, streaming = false) {
   return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
-// ─── Generate all questions upfront ───────────────────────
-async function generateQuestions() {
-  if (state.isDemo) {
-    const mockQuestions = [
-      "Can you explain the difference between REST and GraphQL with a real-world example?",
-      "What approaches do you take for state management in large frontend applications?",
-      "Describe a difficult technical bug you solved recently and your debugging process.",
-      "How do you optimize a web application for maximum performance and fast load times?",
-      "Explain the concept of Closure in JavaScript and provide a common use-case.",
-      "How do you approach ensuring your web application is fully accessible (WCAG compliant)?",
-      "Explain the Virtual DOM and how it improves application performance."
-    ];
-    return new Promise((resolve) => setTimeout(() => resolve(mockQuestions.slice(0, state.numQuestions)), 1500));
-  }
+// Change mockQuestions inside generateQuestions()
+const mockQuestions = [
+  "How does your agency handle electronic waste (e-waste) disposal?",
+  "What strategies do you use to reduce server-side energy consumption?",
+  "How do you track the carbon footprint of your digital marketing campaigns?"
+];
 
-  const prompt = `You are an expert technical interviewer.
-Generate exactly ${state.numQuestions} interview questions for a ${state.experience}-level ${state.role} position.
-Language: ${state.language}.
-
-Rules:
-- Mix of technical, behavioural, and situational questions
-- Each question on its own line, numbered 1. 2. 3. etc.
-- No additional commentary, just the numbered questions
-- Keep each question under 30 words
-- Make them realistic and challenging`;
-
-  const raw = await callGemini(prompt);
-  // Parse numbered lines
-  const lines = raw
-    .split("\n")
-    .map((l) => l.replace(/^\d+[\.\)]\s*/, "").trim())
-    .filter((l) => l.length > 10);
-  return lines.slice(0, state.numQuestions);
-}
-
-// ─── Score a single answer ─────────────────────────────────
-async function scoreAnswer(question, answer) {
-  if (state.isDemo) {
-    return new Promise((resolve) => setTimeout(() => resolve({
-      score: answer.length > 30 ? 85 : 45,
-      strengths: "You provided a straight-forward answer touching on the basic concepts.",
-      improvements: "Try to add more technical depth and specific examples from your past projects.",
-      sample: "A comprehensive answer would start with the definition, followed by trade-offs, and conclude with a specific real-world example."
-    }), 2000));
-  }
-
-  const prompt = `You are a strict but fair technical interviewer evaluating a candidate's answer.
-
-Role: ${state.role} (${state.experience} level)
-Question: "${question}"
-Candidate's Answer: "${answer || "(no answer provided)"}"
-
-Evaluate and respond ONLY in this exact JSON format (no markdown, no extra text):
-{
-  "score": <integer 0-100>,
-  "strengths": "<1-2 sentences about what was good>",
-  "improvements": "<1-2 sentences on what to improve>",
-  "sample": "<2-3 sentence ideal answer>"
-}`;
-
-  const raw = await callGemini(prompt);
-  try {
-    const clean = raw.replace(/```json|```/g, "").trim();
-    return JSON.parse(clean);
-  } catch {
-    // Fallback parse
-    const scoreMatch = raw.match(/"score"\s*:\s*(\d+)/);
-    const score = scoreMatch ? parseInt(scoreMatch[1]) : 50;
-    return {
-      score,
-      strengths: "You provided a response to the question.",
-      improvements: "Try to be more specific with examples from your experience.",
-      sample: "A strong answer would include concrete examples, specific technologies, and measurable outcomes.",
-    };
-  }
-}
+// Change mock feedback inside scoreAnswer()
+return new Promise((resolve) => setTimeout(() => resolve({
+  score: answer.length > 30 ? 90 : 50,
+  strengths: "Great focus on energy reduction and hardware lifecycle.",
+  improvements: "Consider adding specific metrics for carbon offsetting.",
+  sample: "An ideal policy includes using green hosting providers and a mandatory recycling program for all office electronics."
+}), 2000));
 
 // ─── Screen transitions ────────────────────────────────────
 function showScreen(id) {
