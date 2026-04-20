@@ -1,0 +1,6 @@
+:root {
+  /* Find these lines and update them */
+  --amber: #4ade80; 
+  --amber-dim: rgba(74, 222, 128, 0.15);
+  --amber-glow: rgba(74, 222, 128, 0.08);
+}
