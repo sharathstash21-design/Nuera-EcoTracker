@@ -4,9 +4,9 @@
   --bg-dark: #050505;
   --bg-card: rgba(255, 255, 255, 0.03);
   --border-glass: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(138, 43, 226, 0.6);
-  --accent-primary: #8a2be2;
-  --accent-secondary: #ff007f;
+  --border-focus: rgba(0, 255, 115, 0.6);
+  --accent-primary: #00ff73;
+  --accent-secondary: #00db8b;
   --text-main: #f4f4f5;
   --text-muted: #a1a1aa;
   --success: #10b981;
@@ -36,8 +36,8 @@ body::before {
   content: '';
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 40%),
-              radial-gradient(circle at 85% 30%, rgba(255, 0, 127, 0.15), transparent 40%);
+  background: radial-gradient(circle at 15% 50%, rgba(0, 255, 115, 0.15), transparent 40%),
+              radial-gradient(circle at 85% 30%, rgba(0, 219, 139, 0.15), transparent 40%);
   z-index: -2;
   pointer-events: none;
 }
@@ -52,7 +52,7 @@ body::before {
 .cursor-glow {
   position: fixed;
   width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(138,43,226,0.12) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(0,255,115,0.12) 0%, transparent 60%);
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
@@ -108,8 +108,8 @@ body::before {
 #screen-setup { max-width: 800px; margin: 0 auto; text-align: center; }
 .hero-label {
   display: inline-block; padding: 6px 16px; border-radius: 20px;
-  border: 1px solid rgba(138,43,226,0.3); background: rgba(138,43,226,0.1);
-  color: #d8b4fe; font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+  border: 1px solid rgba(0,255,115,0.3); background: rgba(0,255,115,0.1);
+  color: #a7f3d0; font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
   text-transform: uppercase; margin-bottom: 24px;
 }
 .hero-title {
@@ -138,7 +138,7 @@ body::before {
 }
 .field-input:focus, .answer-textarea:focus {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 4px rgba(138,43,226,0.15);
+  box-shadow: 0 0 0 4px rgba(0,255,115,0.15);
   background: rgba(0,0,0,0.5);
 }
 select.field-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; }
@@ -154,7 +154,7 @@ select.field-input option { background: var(--bg-dark); color: var(--text-main);
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(138,43,226,0.4);
+  box-shadow: 0 10px 25px rgba(0,255,115,0.4);
 }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary::after {
@@ -182,7 +182,7 @@ select.field-input option { background: var(--bg-dark); color: var(--text-main);
 .progress-bar-wrap { margin-bottom: 10px; }
 .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .progress-meta span { font-weight: 600; font-size: 14px; }
-.role-tag { background: rgba(255,0,127,0.15); color: #ff66b2; padding: 4px 12px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(255,0,127,0.3); }
+.role-tag { background: rgba(0,219,139,0.15); color: #6ee7b7; padding: 4px 12px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(0,219,139,0.3); }
 .progress-track { background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; overflow: hidden; }
 .progress-fill { background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 
@@ -193,7 +193,7 @@ select.field-input option { background: var(--bg-dark); color: var(--text-main);
 .q-loading.visible { display: flex; margin-bottom: 20px; }
 
 .spinner {
-  width: 20px; height: 20px; border: 3px solid rgba(138,43,226,0.3); border-top-color: var(--accent-primary);
+  width: 20px; height: 20px; border: 3px solid rgba(0,255,115,0.3); border-top-color: var(--accent-primary);
   border-radius: 50%; animation: spin 1s linear infinite;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -205,7 +205,7 @@ select.field-input option { background: var(--bg-dark); color: var(--text-main);
 .char-count { color: var(--text-muted); font-size: 13px; font-family: var(--font-mono); }
 
 /* Feedback Panel */
-.feedback-panel { padding: 32px; display: none; border: 1px solid var(--border-focus); border-radius: var(--radius-lg); background: var(--bg-card); backdrop-filter: blur(24px); box-shadow: 0 0 30px rgba(138,43,226,0.15); animation: floatUp 0.5s ease forwards; }
+.feedback-panel { padding: 32px; display: none; border: 1px solid var(--border-focus); border-radius: var(--radius-lg); background: var(--bg-card); backdrop-filter: blur(24px); box-shadow: 0 0 30px rgba(0,255,115,0.15); animation: floatUp 0.5s ease forwards; }
 .feedback-panel.visible { display: block; }
 .feedback-loading { display: none; align-items: center; gap: 12px; font-weight: 500; color: var(--accent-primary); }
 .feedback-loading.visible { display: flex; }
@@ -235,7 +235,7 @@ select.field-input option { background: var(--bg-dark); color: var(--text-main);
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
 .results-title { font-size: 48px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
 
-.overall-score-card { padding: 48px; display: inline-block; width: 100%; max-width: 400px; margin-bottom: 40px; border: 1px solid var(--border-focus); border-radius: var(--radius-lg); background: var(--bg-card); backdrop-filter: blur(24px); box-shadow: 0 0 50px rgba(138,43,226,0.1); }
+.overall-score-card { padding: 48px; display: inline-block; width: 100%; max-width: 400px; margin-bottom: 40px; border: 1px solid var(--border-focus); border-radius: var(--radius-lg); background: var(--bg-card); backdrop-filter: blur(24px); box-shadow: 0 0 50px rgba(0,255,115,0.1); }
 .overall-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 16px; }
 .overall-value { font-size: 96px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .overall-grade { font-size: 18px; font-weight: 600; margin-top: 16px; color: var(--text-main); }
