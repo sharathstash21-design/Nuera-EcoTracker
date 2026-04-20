@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InterviewForge AI — Mock Interview Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="cursor-glow" id="cursor-glow"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon" aria-hidden="true">⬡</span>
+      <span>InterviewForge</span>
+      <span class="logo-badge">AI</span>
+    </div>
+    <div class="header-right">
+      <span class="powered-by">Powered by Gemini</span>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: Setup -->
+  <main id="screen-setup" class="screen active" aria-label="Interview setup">
+    <div class="hero">
+      <div class="hero-label">Mock Interview Coach</div>
+      <h1 class="hero-title">Practice. <span class="accent">Perform.</span><br/>Get Hired.</h1>
+      <p class="hero-sub">AI-generated interview questions tailored to your role. Real-time scoring and feedback.</p>
+    </div>
+
+    <div class="setup-card">
+      <div class="setup-grid">
+        <div class="field-group">
+          <label class="field-label" for="job-role">Job Role</label>
+          <input
+            class="field-input"
+            id="job-role"
+            type="text"
+            placeholder="e.g. Frontend Developer"
+            aria-label="Enter your target job role"
+            autocomplete="off"
+          />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="experience">Experience Level</label>
+          <select class="field-input" id="experience" aria-label="Select your experience level">
+            <option value="fresher">Fresher (0–1 yr)</option>
+            <option value="junior">Junior (1–3 yrs)</option>
+            <option value="mid" selected>Mid-level (3–5 yrs)</option>
+            <option value="senior">Senior (5+ yrs)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="num-questions">Number of Questions</label>
+          <select class="field-input" id="num-questions" aria-label="Select number of interview questions">
+            <option value="3">3 Questions</option>
+            <option value="5" selected>5 Questions</option>
+            <option value="7">7 Questions</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="language">Language</label>
+          <select class="field-input" id="language" aria-label="Select interview language">
+            <option value="English">English</option>
+            <option value="Tamil">Tamil</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-start" onclick="startInterview()" aria-label="Start AI mock interview">
+        <span class="btn-text">Start Interview</span>
+        <span class="btn-icon" aria-hidden="true">→</span>
+      </button>
+      <div class="setup-note">Questions are generated live by Gemini API · No data stored without consent</div>
+    </div>
+  </main>
+
+  <!-- SCREEN 2: Interview -->
+  <main id="screen-interview" class="screen" aria-label="Interview in progress" aria-live="polite">
+    <div class="interview-layout">
+      <div class="progress-bar-wrap">
+        <div class="progress-meta">
+          <span id="progress-label">Question 1 of 5</span>
+          <span id="role-label-interview" class="role-tag"></span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="5">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="question-card" id="question-card">
+        <div class="q-number" id="q-number" aria-hidden="true">01</div>
+        <div class="q-loading" id="q-loading" aria-label="Generating question…">
+          <div class="spinner" aria-hidden="true"></div>
+          <span>Generating question…</span>
+        </div>
+        <p class="q-text" id="q-text" aria-live="polite"></p>
+      </div>
+
+      <div class="answer-section">
+        <label class="field-label" for="user-answer">Your Answer</label>
+        <textarea
+          class="answer-textarea"
+          id="user-answer"
+          placeholder="Type your answer here…"
+          aria-label="Type your answer to the interview question"
+          rows="6"
+        ></textarea>
+        <div class="answer-actions">
+          <span class="char-count" id="char-count" aria-live="polite">0 characters</span>
+          <button class="btn-primary" id="btn-submit-answer" onclick="submitAnswer()" aria-label="Submit answer and get AI feedback">
+            <span class="btn-text">Submit Answer</span>
+            <span class="btn-icon" aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback panel -->
+      <div class="feedback-panel" id="feedback-panel" aria-live="polite" aria-label="AI feedback">
+        <div class="feedback-loading" id="feedback-loading" aria-label="Scoring your answer…">
+          <div class="spinner" aria-hidden="true"></div>
+          <span>Scoring your answer…</span>
+        </div>
+        <div class="feedback-content" id="feedback-content">
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80" aria-hidden="true">
+              <circle class="ring-bg" cx="40" cy="40" r="32"/>
+              <circle class="ring-fill" id="ring-fill" cx="40" cy="40" r="32"/>
+            </svg>
+            <div class="score-value" id="score-value" aria-label="Score">—</div>
+          </div>
+          <div class="feedback-text">
+            <div class="feedback-section">
+              <div class="feedback-heading">Strengths</div>
+              <div class="feedback-body" id="fb-strengths"></div>
+            </div>
+            <div class="feedback-section">
+              <div class="feedback-heading">Improvements</div>
+              <div class="feedback-body" id="fb-improvements"></div>
+            </div>
+            <div class="feedback-section">
+              <div class="feedback-heading">Sample Answer</div>
+              <div class="feedback-body" id="fb-sample"></div>
+            </div>
+          </div>
+        </div>
+        <div class="feedback-nav">
+          <button class="btn-secondary" id="btn-next" onclick="nextQuestion()" aria-label="Go to next question">
+            Next Question <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SCREEN 3: Results -->
+  <main id="screen-results" class="screen" aria-label="Interview results">
+    <div class="results-layout">
+      <div class="results-hero">
+        <div class="results-badge" aria-hidden="true">✦</div>
+        <h2 class="results-title">Interview Complete</h2>
+        <p class="results-sub" id="results-sub">Here's how you performed</p>
+      </div>
+
+      <div class="overall-score-card">
+        <div class="overall-label">Overall Score</div>
+        <div class="overall-value" id="overall-score" aria-label="Overall score">—</div>
+        <div class="overall-grade" id="overall-grade"></div>
+      </div>
+
+      <div class="results-breakdown" id="results-breakdown" aria-label="Score breakdown by question"></div>
+
+      <div class="results-actions">
+        <button class="btn-primary" onclick="saveToSheets()" aria-label="Save results to Google Sheets" id="btn-sheets">
+          <span class="btn-text">Save to Google Sheets</span>
+          <span class="btn-icon" aria-hidden="true">↗</span>
+        </button>
+        <button class="btn-secondary" onclick="resetInterview()" aria-label="Start a new interview">
+          Try Again <span aria-hidden="true">↺</span>
+        </button>
+      </div>
+
+      <div class="sheets-status" id="sheets-status" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Cursor glow follow effect
+    const cursorGlow = document.getElementById('cursor-glow');
+    document.addEventListener('mousemove', (e) => {
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top = e.clientY + 'px';
+    });
+  </script>
+</body>
+</html>
