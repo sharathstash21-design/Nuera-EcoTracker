@@ -1,5 +1,5 @@
 /**
- * InterviewForge AI — Main Application
+ * InterviewForge AI / Nuera EcoTracker — Main Application
  * Uses: Gemini API (question generation + scoring) + Google Sheets API (result saving)
  */
 
@@ -13,8 +13,7 @@ const state = {
   questions: [],
   currentIndex: 0,
   answers: [],
-  scores: [],
-  scores: [],
+  scores: [],       // ✅ Fixed: removed duplicate key
   feedbacks: [],
   isDemo: false,
 };
@@ -39,7 +38,7 @@ function getApiKey() {
 }
 
 // ─── Gemini API call ──────────────────────────────────────
-async function callGemini(prompt, streaming = false) {
+async function callGemini(prompt) {
   const key = state.apiKey;
   const url = `${CONFIG.GEMINI_ENDPOINT}${CONFIG.GEMINI_MODEL}:generateContent?key=${key}`;
 
@@ -66,20 +65,74 @@ async function callGemini(prompt, streaming = false) {
   return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
-// Change mockQuestions inside generateQuestions()
-const mockQuestions = [
-  "How does your agency handle electronic waste (e-waste) disposal?",
-  "What strategies do you use to reduce server-side energy consumption?",
-  "How do you track the carbon footprint of your digital marketing campaigns?"
-];
+// ─── Generate Questions ───────────────────────────────────
+async function generateQuestions() {
+  if (state.isDemo) {
+    // ✅ Fixed: mock data is now correctly inside this function
+    const mockQuestions = [
+      "How does your agency handle electronic waste (e-waste) disposal?",
+      "What strategies do you use to reduce server-side energy consumption?",
+      "How do you track the carbon footprint of your digital marketing campaigns?",
+      "Describe your approach to sustainable procurement for office supplies.",
+      "What KPIs do you use to measure your agency's environmental impact?",
+      "How do you communicate sustainability initiatives to clients?",
+      "What renewable energy options have you explored for your office?",
+    ];
+    return new Promise((resolve) =>
+      setTimeout(() => resolve(mockQuestions.slice(0, state.numQuestions)), 1200)
+    );
+  }
 
-// Change mock feedback inside scoreAnswer()
-return new Promise((resolve) => setTimeout(() => resolve({
-  score: answer.length > 30 ? 90 : 50,
-  strengths: "Great focus on energy reduction and hardware lifecycle.",
-  improvements: "Consider adding specific metrics for carbon offsetting.",
-  sample: "An ideal policy includes using green hosting providers and a mandatory recycling program for all office electronics."
-}), 2000));
+  const prompt = `You are an expert interviewer specializing in sustainability and green business practices.
+Generate exactly ${state.numQuestions} interview questions for a ${state.experience}-level "${state.role}" candidate.
+Focus on: carbon footprint tracking, e-waste, green procurement, renewable energy, and ESG reporting.
+Language: ${state.language}.
+Return ONLY a JSON array of strings. No preamble, no markdown, no extra text.
+Example: ["Question 1?", "Question 2?"]`;
+
+  const text = await callGemini(prompt);
+  const clean = text.replace(/```json|```/g, "").trim();
+  const parsed = JSON.parse(clean);
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+// ─── Score Answer ─────────────────────────────────────────
+async function scoreAnswer(question, answer) {
+  if (state.isDemo) {
+    // ✅ Fixed: mock feedback is now correctly inside this function
+    return new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            score: answer.length > 30 ? 90 : 50,
+            strengths:
+              "Great focus on energy reduction and hardware lifecycle management.",
+            improvements:
+              "Consider adding specific metrics for carbon offsetting and third-party audits.",
+            sample:
+              "An ideal policy includes using green hosting providers, a mandatory recycling program for all office electronics, and annual third-party sustainability audits.",
+          }),
+        2000
+      )
+    );
+  }
+
+  const prompt = `You are a sustainability auditor evaluating an interview answer.
+Question: "${question}"
+Candidate's Answer: "${answer}"
+
+Evaluate the answer and return ONLY a JSON object with these exact keys:
+- score (integer 0–100)
+- strengths (string: 1–2 sentences on what was good)
+- improvements (string: 1–2 sentences on what could be better)
+- sample (string: 2–3 sentence model answer)
+
+No preamble, no markdown, no extra text. Just the JSON object.`;
+
+  const text = await callGemini(prompt);
+  const clean = text.replace(/```json|```/g, "").trim();
+  return JSON.parse(clean);
+}
 
 // ─── Screen transitions ────────────────────────────────────
 function showScreen(id) {
@@ -101,7 +154,7 @@ async function startInterview() {
   }
 
   const key = getApiKey();
-  state.isDemo = (key === "demo");
+  state.isDemo = key === "demo";
   state.apiKey = state.isDemo ? "demo_key" : key;
 
   state.role = role;
@@ -125,7 +178,11 @@ async function startInterview() {
     showScreen("screen-interview");
     renderQuestion(0);
   } catch (e) {
-    alert("Error generating questions: " + e.message + "\n\nCheck your API key and try again.");
+    alert(
+      "Error generating questions: " +
+        e.message +
+        "\n\nCheck your API key and try again."
+    );
     btn.disabled = false;
     btn.querySelector(".btn-text").textContent = "Start Interview";
   }
@@ -138,8 +195,12 @@ function renderQuestion(index) {
   $("progress-label").textContent = `Question ${index + 1} of ${total}`;
   $("role-label-interview").textContent = state.role;
   $("progress-fill").style.width = `${((index + 1) / total) * 100}%`;
-  $("progress-fill").closest("[role=progressbar]").setAttribute("aria-valuenow", index + 1);
-  $("progress-fill").closest("[role=progressbar]").setAttribute("aria-valuemax", total);
+  $("progress-fill")
+    .closest("[role=progressbar]")
+    .setAttribute("aria-valuenow", index + 1);
+  $("progress-fill")
+    .closest("[role=progressbar]")
+    .setAttribute("aria-valuemax", total);
 
   $("q-number").textContent = String(index + 1).padStart(2, "0");
   $("q-text").textContent = state.questions[index];
@@ -187,9 +248,11 @@ async function submitAnswer() {
     renderFeedback(result);
   } catch (e) {
     $("feedback-loading").classList.remove("visible");
-    $("feedback-loading").textContent = "Error scoring answer. Please try again.";
+    $("feedback-loading").textContent =
+      "Error scoring answer. Please try again.";
     $("btn-submit-answer").disabled = false;
-    $("btn-submit-answer").querySelector(".btn-text").textContent = "Submit Answer";
+    $("btn-submit-answer").querySelector(".btn-text").textContent =
+      "Submit Answer";
   }
 }
 
@@ -206,7 +269,12 @@ function renderFeedback(result) {
   $("score-value").textContent = score;
 
   // Colour ring by score
-  const ringColor = score >= 70 ? "var(--green)" : score >= 40 ? "var(--amber)" : "var(--red)";
+  const ringColor =
+    score >= 70
+      ? "var(--green)"
+      : score >= 40
+      ? "var(--amber)"
+      : "var(--red)";
   $("ring-fill").style.stroke = ringColor;
   $("score-value").style.color = ringColor;
 
@@ -230,7 +298,9 @@ function nextQuestion() {
 function showResults() {
   showScreen("screen-results");
 
-  const avg = Math.round(state.scores.reduce((a, b) => a + (b || 0), 0) / state.scores.length);
+  const avg = Math.round(
+    state.scores.reduce((a, b) => a + (b || 0), 0) / state.scores.length
+  );
   $("overall-score").textContent = avg;
   $("overall-grade").textContent = gradeLabel(avg);
   $("results-sub").textContent = `${state.role} · ${state.questions.length} questions`;
@@ -269,7 +339,6 @@ async function saveToSheets() {
   btn.querySelector(".btn-text").textContent = "Saving to Database…";
 
   try {
-    // Preparing the rows for the Apps Script
     const rows = state.questions.map((q, i) => [
       new Date().toLocaleString(),
       state.role,
@@ -278,29 +347,26 @@ async function saveToSheets() {
       q,
       state.answers[i] || "N/A",
       state.scores[i] ?? 0,
-      state.feedbacks[i]?.strengths || ""
+      state.feedbacks[i]?.strengths || "",
     ]);
 
-    // Your exact Apps Script URL
-    const url = "https://script.google.com/macros/s/AKfycbzwZx6u9WjGq-Ep4NggZGpaVA6vzEJlwxs8XWpv_Gaa5d5LzCi3NMICSXVNEqtOEn9HjQ/exec";
+    const url =
+      "https://script.google.com/macros/s/AKfycbzwZx6u9WjGq-Ep4NggZGpaVA6vzEJlwxs8XWpv_Gaa5d5LzCi3NMICSXVNEqtOEn9HjQ/exec";
 
-    // Sending data via POST to your script
-    const res = await fetch(url, {
+    await fetch(url, {
       method: "POST",
-      mode: "no-cors", // This is required for Apps Script Web Apps
+      mode: "no-cors",
       cache: "no-cache",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ values: rows }),
     });
 
-    // Since "no-cors" doesn't give a response body, we assume success if no error is thrown
     status.textContent = "✓ Interview results synced to NUERA Database!";
-    status.style.color = "var(--green)";
-    
+    status.style.color = "var(--success)";
   } catch (error) {
     console.error("Save Error:", error);
     status.textContent = "Error saving. Downloading CSV as fallback...";
-    exportCSV(); // Fallback to CSV if the script fails
+    exportCSV();
   } finally {
     btn.disabled = false;
     btn.querySelector(".btn-text").textContent = "Save to Google Sheets";
@@ -309,7 +375,17 @@ async function saveToSheets() {
 
 // ─── CSV fallback export ───────────────────────────────────
 function exportCSV() {
-  const header = ["Date", "Role", "Level", "Q#", "Question", "Answer", "Score", "Strengths", "Improvements"];
+  const header = [
+    "Date",
+    "Role",
+    "Level",
+    "Q#",
+    "Question",
+    "Answer",
+    "Score",
+    "Strengths",
+    "Improvements",
+  ];
   const rows = state.questions.map((q, i) => [
     new Date().toISOString(),
     state.role,
@@ -326,7 +402,8 @@ function exportCSV() {
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = `interview-results-${Date.now()}.csv`;
+  a.href = url;
+  a.download = `interview-results-${Date.now()}.csv`;
   a.click();
   URL.revokeObjectURL(url);
   $("sheets-status").textContent = "✓ Results downloaded as CSV";
