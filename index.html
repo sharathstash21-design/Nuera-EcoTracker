@@ -26,7 +26,7 @@
   <!-- SCREEN 1: Setup -->
   <main id="screen-setup" class="screen active" aria-label="Interview setup">
     <div class="hero">
-      <div class="hero-label">Mock Interview Coach</div>
+      <div class="hero-label">Sustainability Auditor</div>
       <h1 class="hero-title">Track. <span class="accent">Audit.</span><br/>Go Green.</h1>
       <p class="hero-sub">AI-powered sustainability auditing for modern agencies. Built by NUERA.</p>
     </div>
@@ -34,28 +34,28 @@
     <div class="setup-card">
       <div class="setup-grid">
         <div class="field-group">
-          <label class="field-label" for="job-role">Job Role</label>
+          <label class="field-label" for="job-role">Industry Sector</label>
           <input
             class="field-input"
             id="job-role"
             type="text"
-            placeholder="e.g. Frontend Developer"
-            aria-label="Enter your target job role"
+            placeholder="e.g. Web Design Agency"
+            aria-label="Enter your target industry sector"
             autocomplete="off"
           />
         </div>
         <div class="field-group">
-          <label class="field-label" for="experience">Experience Level</label>
-          <select class="field-input" id="experience" aria-label="Select your experience level">
-            <option value="fresher">Fresher (0–1 yr)</option>
-            <option value="junior">Junior (1–3 yrs)</option>
-            <option value="mid" selected>Mid-level (3–5 yrs)</option>
-            <option value="senior">Senior (5+ yrs)</option>
+          <label class="field-label" for="experience">Company Size</label>
+          <select class="field-input" id="experience" aria-label="Select company size">
+            <option value="startup">Startup (1–10 emp)</option>
+            <option value="sme">SME (11–50 emp)</option>
+            <option value="mid" selected>Mid-sized (51–200 emp)</option>
+            <option value="enterprise">Enterprise (200+ emp)</option>
           </select>
         </div>
         <div class="field-group">
-          <label class="field-label" for="num-questions">Number of Questions</label>
-          <select class="field-input" id="num-questions" aria-label="Select number of interview questions">
+          <label class="field-label" for="num-questions">Audit Points</label>
+          <select class="field-input" id="num-questions" aria-label="Select number of audit points">
             <option value="3">3 Questions</option>
             <option value="5" selected>5 Questions</option>
             <option value="7">7 Questions</option>
@@ -71,8 +71,8 @@
         </div>
       </div>
 
-      <button class="btn-primary" id="btn-start" onclick="startInterview()" aria-label="Start AI mock interview">
-        <span class="btn-text">Start Interview</span>
+      <button class="btn-primary" id="btn-start" onclick="startInterview()" aria-label="Start AI sustainability audit">
+        <span class="btn-text">Start Audit</span>
         <span class="btn-icon" aria-hidden="true">→</span>
       </button>
       <div class="setup-note">Questions are generated live by Gemini API · No data stored without consent</div>
@@ -102,18 +102,18 @@
       </div>
 
       <div class="answer-section">
-        <label class="field-label" for="user-answer">Your Answer</label>
+        <label class="field-label" for="user-answer">Company Policy / Proof</label>
         <textarea
           class="answer-textarea"
           id="user-answer"
-          placeholder="Type your answer here…"
-          aria-label="Type your answer to the interview question"
+          placeholder="Enter your policy details or current practices here…"
+          aria-label="Type your response to the audit question"
           rows="6"
         ></textarea>
         <div class="answer-actions">
           <span class="char-count" id="char-count" aria-live="polite">0 characters</span>
-          <button class="btn-primary" id="btn-submit-answer" onclick="submitAnswer()" aria-label="Submit answer and get AI feedback">
-            <span class="btn-text">Submit Answer</span>
+          <button class="btn-primary" id="btn-submit-answer" onclick="submitAnswer()" aria-label="Submit response and get AI feedback">
+            <span class="btn-text">Submit Response</span>
             <span class="btn-icon" aria-hidden="true">↗</span>
           </button>
         </div>
@@ -149,8 +149,8 @@
           </div>
         </div>
         <div class="feedback-nav">
-          <button class="btn-secondary" id="btn-next" onclick="nextQuestion()" aria-label="Go to next question">
-            Next Question <span aria-hidden="true">→</span>
+          <button class="btn-secondary" id="btn-next" onclick="nextQuestion()" aria-label="Go to next audit point">
+            Next Audit Point <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>
@@ -158,11 +158,11 @@
   </main>
 
   <!-- SCREEN 3: Results -->
-  <main id="screen-results" class="screen" aria-label="Interview results">
+  <main id="screen-results" class="screen" aria-label="Audit results">
     <div class="results-layout">
       <div class="results-hero">
         <div class="results-badge" aria-hidden="true">✦</div>
-        <h2 class="results-title">Interview Complete</h2>
+        <h2 class="results-title">Audit Complete</h2>
         <p class="results-sub" id="results-sub">Here's how you performed</p>
       </div>
 
@@ -179,8 +179,8 @@
           <span class="btn-text">Save to Google Sheets</span>
           <span class="btn-icon" aria-hidden="true">↗</span>
         </button>
-        <button class="btn-secondary" onclick="resetInterview()" aria-label="Start a new interview">
-          Try Again <span aria-hidden="true">↺</span>
+        <button class="btn-secondary" onclick="resetInterview()" aria-label="Start a new audit">
+          New Audit <span aria-hidden="true">↺</span>
         </button>
       </div>
 

@@ -83,8 +83,8 @@ async function generateQuestions() {
     );
   }
 
-  const prompt = `You are an expert interviewer specializing in sustainability and green business practices.
-Generate exactly ${state.numQuestions} interview questions for a ${state.experience}-level "${state.role}" candidate.
+  const prompt = `You are a Lead Sustainability Auditor.
+Generate exactly ${state.numQuestions} sustainability audit questions for a ${state.experience} "${state.role}" sector company.
 Focus on: carbon footprint tracking, e-waste, green procurement, renewable energy, and ESG reporting.
 Language: ${state.language}.
 Return ONLY a JSON array of strings. No preamble, no markdown, no extra text.
@@ -117,9 +117,9 @@ async function scoreAnswer(question, answer) {
     );
   }
 
-  const prompt = `You are a sustainability auditor evaluating an interview answer.
+  const prompt = `You are a Lead Sustainability Auditor evaluating a company's response to an audit query.
 Question: "${question}"
-Candidate's Answer: "${answer}"
+Company's Answer: "${answer}"
 
 Evaluate the answer and return ONLY a JSON object with these exact keys:
 - score (integer 0–100)
@@ -143,7 +143,7 @@ function showScreen(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ─── START INTERVIEW ───────────────────────────────────────
+// ─── START AUDIT ───────────────────────────────────────
 async function startInterview() {
   const role = $("job-role").value.trim();
   if (!role) {
@@ -184,7 +184,7 @@ async function startInterview() {
         "\n\nCheck your API key and try again."
     );
     btn.disabled = false;
-    btn.querySelector(".btn-text").textContent = "Start Interview";
+    btn.querySelector(".btn-text").textContent = "Start Audit";
   }
 }
 
@@ -324,10 +324,10 @@ function showResults() {
 }
 
 function gradeLabel(score) {
-  if (score >= 85) return "🏆 Excellent — You're interview-ready!";
-  if (score >= 70) return "👍 Good — A few more practice rounds and you're set";
-  if (score >= 50) return "📈 Developing — Keep practising, you're improving";
-  return "💪 Needs work — Review fundamentals and try again";
+  if (score >= 85) return "🏆 Excellent — Strong sustainability practices!";
+  if (score >= 70) return "👍 Good — A solid foundation, but room to grow";
+  if (score >= 50) return "📈 Developing — Needs more structured policies";
+  return "💪 Needs work — Immediate action required on green practices";
 }
 
 // ─── SAVE TO GOOGLE SHEETS ─────────────────────────────────
@@ -419,5 +419,5 @@ function resetInterview() {
   $("job-role").value = "";
   showScreen("screen-setup");
   $("btn-start").disabled = false;
-  $("btn-start").querySelector(".btn-text").textContent = "Start Interview";
+  $("btn-start").querySelector(".btn-text").textContent = "Start Audit";
 }
